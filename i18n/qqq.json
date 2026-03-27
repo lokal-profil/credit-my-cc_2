@@ -52,6 +52,7 @@
 	"credit-my-cc-cc0": "Message when the file is CC0 licensed. Contains HTML (<br /> tag).",
 	"credit-my-cc-missing-file": "Error message when the file could not be found on Commons.",
 	"credit-my-cc-random-url": "Error message when the input looks like a URL rather than a filename.",
+	"credit-my-cc-api-error": "Error message when the connection to the Wikimedia Commons API fails.",
 	"credit-my-cc-missing-parameter": "Error message prefix for missing required fields. The field name is appended.",
 	"credit-my-cc-subject": "Suggested email subject line for the complaint.",
 	"credit-my-cc-loading": "Loading indicator text shown while fetching data from Commons.",

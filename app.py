@@ -9,7 +9,7 @@ for Wikimedia Sverige to a Python/Flask application with translatewiki.net
 compatible i18n support using the Banana message format.
 """
 
-import os
+import functools
 import re
 from pathlib import Path
 from urllib.parse import unquote
@@ -29,7 +29,6 @@ from markupsafe import Markup
 # ---------------------------------------------------------------------------
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 
 I18N_DIR = Path(__file__).resolve().parent / "i18n"
 banana = BananaI18n(I18N_DIR)
@@ -56,6 +55,7 @@ LANGUAGE_AUTONYMS = {
 }
 
 
+@functools.cache
 def _available_languages():
     """Return a sorted list of language codes with translations."""
     langs = []
@@ -91,8 +91,8 @@ def inject_i18n_helpers():
     def msg(key, *args):
         """Translate message *key*, replacing $1, $2, … with *args*."""
         text = banana.translate(lang, key)
-        for i, arg in enumerate(args, start=1):
-            text = text.replace(f"${i}", str(arg))
+        for i in range(len(args), 0, -1):
+            text = text.replace(f"${i}", str(args[i - 1]))
         return Markup(text)
 
     return dict(
@@ -146,6 +146,7 @@ COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 USER_AGENT = "CreditMyCC/2.0 (https://lp-tools.toolforge.org/credit-my-cc_2/; User:Lokal_Profil)"
 THUMB_SIZE = 600
 FILENAME_PLACEHOLDER = "Foo.svg"
+VALID_TONES = {"happy", "neutral", "angry"}
 
 
 def _strip_html(html_str):
@@ -254,7 +255,6 @@ def _parse_commons_response(data):
 @app.route("/")
 def index():
     """Main page."""
-    lang = _get_language()
     return render_template("index.html", examples=EXAMPLES)
 
 
@@ -290,6 +290,8 @@ def api_lookup():
 def api_letter():
     """AJAX endpoint: render a complaint letter."""
     tone = request.args.get("tone", "happy")
+    if tone not in VALID_TONES:
+        return jsonify({"error": "invalid_tone"}), 400
     lang = _get_language()
 
     # Gather data from query parameters

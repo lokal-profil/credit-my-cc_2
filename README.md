@@ -12,7 +12,7 @@ This is a modern Python/Flask rewrite of the [original static jQuery tool (v1)](
 ## Key improvements over the original
 
 - **Python/Flask backend** — modern framework, easy to deploy on Toolforge or any WSGI host.
-- **Translatewiki.net-compatible i18n** — uses the [Banana message format](https://github.com/wikimedia/banana-i18n) via [`banana-i18n`](https://pypi.org/project/banana-i18n/) and [`Flask-Banana`](https://pypi.org/project/Flask-Banana/), the same format used by MediaWiki and other Wikimedia tools. Translation files in `i18n/` are ready to be synced with [translatewiki.net](https://translatewiki.net/wiki/Translating:Intuition).
+- **Translatewiki.net-compatible i18n** — uses the [Banana message format](https://github.com/wikimedia/banana-i18n) via [`banana-i18n`](https://pypi.org/project/banana-i18n/), the same format used by MediaWiki and other Wikimedia tools. Translation files in `i18n/` are ready to be synced with [translatewiki.net](https://translatewiki.net/wiki/Translating:Intuition).
 - **No jQuery dependency** — vanilla JavaScript.
 - **Responsive design** — works on mobile and desktop.
 - **Server-side letter rendering** — letters are rendered through Jinja2 templates with full i18n support, making it easy to add new letter templates or tones.

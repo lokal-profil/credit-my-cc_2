@@ -114,7 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Handle errors from the API
         if (data.error) {
-            const msg = MESSAGES[data.error] || data.error;
+            let msg = MESSAGES[data.error] || data.error;
+            if (data.error === "api_error") {
+                msg += ` (${data.error})`;
+            }
             showError(msg);
             return;
         }
@@ -130,19 +133,19 @@ document.addEventListener("DOMContentLoaded", () => {
         $("#file_url").value = data.description_url;
         $("#upload_date").value = data.upload_date || "";
         $("#credit").value = data.credit || "";
-        $("#credit-preview").innerHTML = data.credit || "";
-        $("#credit-extra").innerHTML = data.credit_extra || "";
+        $("#credit-preview").innerHTML = DOMPurify.sanitize(data.credit || "");
+        $("#credit-extra").innerHTML = DOMPurify.sanitize(data.credit_extra || "");
         $("#descr").value = "";
         $("#descr-preview").textContent = "";
-        $("#descr-extra").textContent = data.description_extra || "";
+        $("#descr-extra").innerHTML = DOMPurify.sanitize(data.description_extra || "");
         $("#upload-date-note").textContent = data.upload_date ? MESSAGES.upload_date_note : "";
 
         postLookup.classList.remove("hidden");
         $("#usage").focus();
     }
 
-    function showError(html) {
-        status.innerHTML = html;
+    function showError(msg) {
+        status.innerHTML = DOMPurify.sanitize(msg);
         status.className = "status-message error";
     }
 
@@ -188,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`/api/letter?${params.toString()}`)
             .then((r) => r.text())
             .then((html) => {
-                letterContent.innerHTML = html;
+                letterContent.innerHTML = DOMPurify.sanitize(html);
                 letterSection.classList.remove("hidden");
                 letterSection.scrollIntoView({ behavior: "smooth" });
             })

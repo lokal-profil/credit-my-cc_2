@@ -53,6 +53,7 @@
 	"credit-my-cc-cc0": "This file appears to have been licensed under CC0, meaning it is in the public domain (i.e. not protected by copyright).<br />No complaint is therefore possible.",
 	"credit-my-cc-missing-file": "Could not find the file. Are you sure you entered the correct filename?",
 	"credit-my-cc-random-url": "Please enter the name of a file on Wikimedia Commons (this appears to be a URL somewhere else).",
+	"credit-my-cc-api-error": "Something went wrong when connecting to Wikimedia Commons.",
 	"credit-my-cc-missing-parameter": "The following required fields are missing: ",
 	"credit-my-cc-subject": "Improper use of my work",
 	"credit-my-cc-loading": "loading...",

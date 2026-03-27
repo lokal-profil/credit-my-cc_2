@@ -198,12 +198,14 @@
             unsupported_license: {{ _('credit-my-cc-unsupported-license') | tojson }},
             public_domain: {{ _('credit-my-cc-public-domain') | tojson }},
             cc0: {{ _('credit-my-cc-cc0') | tojson }},
+            api_error: {{ _('credit-my-cc-api-error') | tojson }},
             missing_parameter: {{ _('credit-my-cc-missing-parameter') | tojson }},
             upload_date_note: {{ _('credit-my-cc-upload-date-note') | tojson }},
             check: {{ _('credit-my-cc-button-check') | tojson }},
         };
         const CURRENT_LANG = {{ current_lang | tojson }};
     </script>
+    <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/dompurify/3.2.7/purify.min.js"></script>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

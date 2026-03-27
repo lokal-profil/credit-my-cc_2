@@ -53,6 +53,7 @@
 	"credit-my-cc-cc0": "Denna filen verkar ha licensierats under CC0 vilket innebär att den är i public domain (dvs. inte upphovsrättsligt skyddad).<br />Ingen anmälan är därmed möjlig.",
 	"credit-my-cc-missing-file": "Kunde inte hitta filen, är du säker på att du angav rätt filnamn?",
 	"credit-my-cc-random-url": "Vänligen ange namnet på en fil på Wikimedia Commons (detta verkar vara en url någon annanstans).",
+	"credit-my-cc-api-error": "Något gick fel vid anslutningen till Wikimedia Commons.",
 	"credit-my-cc-missing-parameter": "Följande krävda fält saknas: ",
 	"credit-my-cc-subject": "Felaktig användning av mitt verk",
 	"credit-my-cc-loading": "hämtar...",
