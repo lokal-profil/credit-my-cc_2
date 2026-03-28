@@ -127,28 +127,28 @@
             <label>{{ _('credit-my-cc-letter-type-label') }}</label>
             <div class="letter-selector" title="{{ _('credit-my-cc-letter-type-title') }}">
                 <label class="tone-option">
-                    <img src="{{ url_for('static', filename='images/Face-smile.png') }}"
-                         width="40" alt="{{ _('credit-my-cc-letter-happy') }}"
-                         title="{{ _('credit-my-cc-letter-happy') }}" />
+                    <span class="tone-emoji" role="img"
+                          aria-label="{{ _('credit-my-cc-letter-happy') }}"
+                          title="{{ _('credit-my-cc-letter-happy') }}">&#x1F60A;</span>
                     <input type="radio" name="tone" value="happy" checked />
                 </label>
                 <label class="tone-option">
-                    <img src="{{ url_for('static', filename='images/Face-plain.png') }}"
-                         width="40" alt="{{ _('credit-my-cc-letter-neutral') }}"
-                         title="{{ _('credit-my-cc-letter-neutral') }}" />
+                    <span class="tone-emoji" role="img"
+                          aria-label="{{ _('credit-my-cc-letter-neutral') }}"
+                          title="{{ _('credit-my-cc-letter-neutral') }}">&#x1F610;</span>
                     <input type="radio" name="tone" value="neutral" />
                 </label>
                 <label class="tone-option">
-                    <img src="{{ url_for('static', filename='images/Face-sad.png') }}"
-                         width="40" alt="{{ _('credit-my-cc-letter-angry') }}"
-                         title="{{ _('credit-my-cc-letter-angry') }}" />
+                    <span class="tone-emoji" role="img"
+                          aria-label="{{ _('credit-my-cc-letter-angry') }}"
+                          title="{{ _('credit-my-cc-letter-angry') }}">&#x1F620;</span>
                     <input type="radio" name="tone" value="angry" />
                 </label>
                 {% if other_letters %}
                 <label class="tone-option">
-                    <img src="{{ url_for('static', filename='images/Face-monkey.png') }}"
-                         width="40" alt="{{ _('credit-my-cc-letter-other') }}"
-                         title="{{ _('credit-my-cc-letter-other') }}" />
+                    <span class="tone-emoji" role="img"
+                          aria-label="{{ _('credit-my-cc-letter-other') }}"
+                          title="{{ _('credit-my-cc-letter-other') }}">&#x1F435;</span>
                     <input type="radio" name="tone" value="other" />
                 </label>
                 <select id="other-letter-select" class="hidden">
@@ -184,10 +184,6 @@
         <p>
             {{ _('credit-my-cc-footer-source',
                   '<a href="https://github.com/lokal-profil/credit-my-cc_2">GitHub</a>') }}
-        </p>
-        <p>
-            {{ _('credit-my-cc-footer-icons',
-                  '<a href="https://en.wikipedia.org/wiki/Tango_Desktop_Project">Tango!</a>') }}
         </p>
         <p>
             {{ _('credit-my-cc-footer-logo',

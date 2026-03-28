@@ -289,7 +289,9 @@ input[type="text"].warning {
 .tone-option:hover {
     background: rgba(0,0,0,0.04);
 }
-.tone-option img {
+.tone-emoji {
+    font-size: 2.25rem;
+    line-height: 1;
     display: block;
 }
 .tone-option input[type="radio"] {
