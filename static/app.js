@@ -43,8 +43,27 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") doLookup();
     });
 
-    // ── Write button ──────────────────────────────────────────────────
-    btnWrite.addEventListener("click", doWrite);
+    // ── Write / Copy button ──────────────────────────────────────────
+    let writeMode = true;
+    btnWrite.setAttribute("aria-live", "polite");
+    btnWrite.addEventListener("click", () => {
+        if (writeMode) {
+            doWrite();
+        } else {
+            doCopy();
+        }
+    });
+
+    function switchToCopyMode() {
+        writeMode = false;
+        btnWrite.textContent = MESSAGES.copy;
+    }
+
+    function switchToWriteMode() {
+        if (writeMode) return;
+        writeMode = true;
+        btnWrite.textContent = MESSAGES.write;
+    }
 
     // ── Live previews for credit & description fields ─────────────────
     $$("#credit, #descr").forEach((input) => {
@@ -56,7 +75,16 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 previewEl.textContent = input.value;
             }
+            switchToWriteMode();
         });
+    });
+
+    // ── Revert to Write mode on any form input change ─────────────────
+    $$("#usage, #upload_date, #license_title, #license_url, #file_title, #file_url").forEach((input) => {
+        input.addEventListener("input", switchToWriteMode);
+    });
+    $$("input[name='tone']").forEach((radio) => {
+        radio.addEventListener("change", switchToWriteMode);
     });
 
     // ── "Other letters" dropdown toggle ────────────────────────────────
@@ -81,6 +109,41 @@ document.addEventListener("DOMContentLoaded", () => {
             sel.addRange(range);
         }
     });
+
+    // ── Copy logic ─────────────────────────────────────────────────
+    function doCopy() {
+        if (!letterContent.textContent) return;
+
+        const htmlBlob = new Blob([letterContent.innerHTML], { type: "text/html" });
+        const textBlob = new Blob([letterContent.innerText], { type: "text/plain" });
+
+        if (navigator.clipboard?.write) {
+            navigator.clipboard.write([
+                new ClipboardItem({ "text/html": htmlBlob, "text/plain": textBlob }),
+            ]).then(() => {
+                showCopiedFeedback();
+            }).catch(() => {
+                fallbackCopy();
+            });
+        } else {
+            fallbackCopy();
+        }
+    }
+
+    function showCopiedFeedback() {
+        btnWrite.textContent = MESSAGES.copied;
+    }
+
+    function fallbackCopy() {
+        const range = document.createRange();
+        range.selectNodeContents(letterContent);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+        sel.removeAllRanges();
+        showCopiedFeedback();
+    }
 
     // ──────────────────────────────────────────────────────────────────
     // Lookup logic
@@ -210,8 +273,9 @@ document.addEventListener("DOMContentLoaded", () => {
             .then((r) => r.text())
             .then((html) => {
                 letterContent.innerHTML = DOMPurify.sanitize(html);
+                switchToCopyMode();
                 letterSection.classList.remove("hidden");
-                letterSection.scrollIntoView({ behavior: "smooth" });
+                btnWrite.scrollIntoView({ behavior: "smooth" });
             })
             .catch(() => {
                 showError("Failed to generate letter.");
