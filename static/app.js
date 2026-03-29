@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const letterSection   = $("#letter-section");
     const letterContent   = $("#letter-content");
     const langSelect      = $("#lang-select");
+    const btnCopy         = $("#btn-copy");
 
     // ── Language switcher ─────────────────────────────────────────────
     langSelect.addEventListener("change", () => {
@@ -76,6 +77,41 @@ document.addEventListener("DOMContentLoaded", () => {
             sel.addRange(range);
         }
     });
+
+    // ── Copy button ──────────────────────────────────────────────────
+    btnCopy.addEventListener("click", () => {
+        if (!letterContent.textContent) return;
+
+        const htmlBlob = new Blob([letterContent.innerHTML], { type: "text/html" });
+        const textBlob = new Blob([letterContent.innerText], { type: "text/plain" });
+
+        if (navigator.clipboard?.write) {
+            navigator.clipboard.write([
+                new ClipboardItem({ "text/html": htmlBlob, "text/plain": textBlob }),
+            ]).then(() => {
+                showCopiedFeedback();
+            }).catch(() => {
+                fallbackCopy();
+            });
+        } else {
+            fallbackCopy();
+        }
+    });
+
+    function showCopiedFeedback() {
+        btnCopy.textContent = MESSAGES.copied;
+    }
+
+    function fallbackCopy() {
+        const range = document.createRange();
+        range.selectNodeContents(letterContent);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+        sel.removeAllRanges();
+        showCopiedFeedback();
+    }
 
     // ──────────────────────────────────────────────────────────────────
     // Lookup logic
@@ -205,6 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then((r) => r.text())
             .then((html) => {
                 letterContent.innerHTML = DOMPurify.sanitize(html);
+                btnCopy.textContent = MESSAGES.copy;
                 letterSection.classList.remove("hidden");
                 letterSection.scrollIntoView({ behavior: "smooth" });
             })

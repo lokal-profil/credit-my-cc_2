@@ -169,7 +169,10 @@
         <div class="copy-hint">
             {{ _('credit-my-cc-copy-instructions') }}
         </div>
-        <div id="letter-content" class="letter-content"></div>
+        <div class="letter-content-wrap">
+            <button id="btn-copy" class="btn-copy" aria-live="polite">{{ _('credit-my-cc-button-copy') }}</button>
+            <div id="letter-content" class="letter-content"></div>
+        </div>
     </section>
 
     {# ── Footer ── #}
@@ -208,6 +211,8 @@
             missing_parameter: {{ _('credit-my-cc-missing-parameter') | tojson }},
             upload_date_note: {{ _('credit-my-cc-upload-date-note') | tojson }},
             check: {{ _('credit-my-cc-button-check') | tojson }},
+            copy: {{ _('credit-my-cc-button-copy') | tojson }},
+            copied: {{ _('credit-my-cc-button-copied') | tojson }},
         };
         const CURRENT_LANG = {{ current_lang | tojson }};
     </script>
