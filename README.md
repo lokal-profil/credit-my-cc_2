@@ -150,11 +150,7 @@ credit-my-cc-flask/
 │   ├── app.js              ← Client-side JavaScript
 │   ├── favicon.ico
 │   └── images/
-│       ├── credit-my-cc.svg
-│       ├── Face-smile.png
-│       ├── Face-plain.png
-│       ├── Face-sad.png
-│       └── Face-monkey.png
+│       └── credit-my-cc.svg
 └── README.md
 ```
 
@@ -172,5 +168,4 @@ Credit-my-CC is licensed under the [MIT license](LICENSE).
 
 - Initial letters by [Jan Ainali](https://github.com/ainali).
 - Original tool by André Costa for [Wikimedia Sverige](https://wikimedia.se/).
-- Icons by the [Tango!](http://tango.freedesktop.org/) project (Public Domain).
 - Logo uses elements from the [BY icon](https://creativecommons.org/about/downloads#Icons) by Creative Commons ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and [Speech bubble](https://commons.wikimedia.org/wiki/File:Speech_bubble.svg) by Amada44 (Public Domain).

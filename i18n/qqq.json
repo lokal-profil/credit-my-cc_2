@@ -55,7 +55,6 @@
 	"credit-my-cc-of-object": "Text fragment appended to indicate the subject of the image. $1 is a description (e.g. 'a sunset').",
 	"credit-my-cc-footer-produced-for": "Footer credit line. $1 is a link to Wikimedia Sverige. $2 is a link to the current maintainer (Lokal_Profil). $3 is the name of the original author (André Costa).",
 	"credit-my-cc-footer-source": "Footer source code line. $1 is a link to the GitHub repository.",
-	"credit-my-cc-footer-icons": "Footer icon credit line. $1 is a link to the Tango project.",
 	"credit-my-cc-footer-logo": "Footer logo credit line. $1 is the BY icon link, $2 is the CC BY 4.0 license link, $3 is the Speech bubble link.",
 	"credit-my-cc-language-selector": "Label for the language selection dropdown.",
 	"credit-my-cc-letter-template-happy": "Complete complaint letter in a friendly/happy tone. This is a full HTML letter from greeting to signature. Contains HTML markup for formatting (paragraphs, lists, spans). Translators are free to restructure the letter entirely.\n\nPlaceholders:\n* $1 = description fragment (e.g. ' of a sunset'), may be empty\n* $2 = the URL where the image is improperly used\n* $3 = upload date fragment (e.g. ' since 2024-01-15'), may be empty\n* $4 = URL to the original file on Wikimedia Commons\n* $5 = how the author wants to be credited (may contain HTML)\n* $6 = the license name (e.g. 'CC BY-SA 4.0')\n* $7 = URL to the license text\n* $8 = the file title on Commons\n* $9 = an example online attribution line (HTML)\n* $10 = an example print/offline attribution line (plain text)",
