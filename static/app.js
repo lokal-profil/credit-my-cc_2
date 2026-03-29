@@ -54,6 +54,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // ── "Other letters" dropdown toggle ────────────────────────────────
+    const otherSelect = $("#other-letter-select");
+    if (otherSelect) {
+        $$("input[name='tone']").forEach((radio) => {
+            radio.addEventListener("change", () => {
+                otherSelect.classList.toggle("hidden", radio.value !== "other" || !radio.checked);
+            });
+        });
+    }
+
     // ── Ctrl+C / ⌘+C auto-select letter ──────────────────────────────
     document.addEventListener("keydown", (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === "c") {
@@ -173,7 +183,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const tone = document.querySelector("input[name='tone']:checked").value;
+        let tone = document.querySelector("input[name='tone']:checked").value;
+        if (tone === "other" && otherSelect) {
+            tone = otherSelect.value;
+        }
 
         const params = new URLSearchParams({
             tone,

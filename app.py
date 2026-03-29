@@ -31,6 +31,7 @@ from markupsafe import Markup
 app = Flask(__name__)
 
 I18N_DIR = Path(__file__).resolve().parent / "i18n"
+LETTERS_DIR = Path(__file__).resolve().parent / "letters"
 banana = BananaI18n(I18N_DIR)
 
 # ---------------------------------------------------------------------------
@@ -63,6 +64,56 @@ def _available_languages():
         if f.suffix == ".json" and f.stem not in ("qqq",):
             langs.append(f.stem)
     return sorted(langs)
+
+
+def _discover_all_other_letters():
+    """Scan letters/{lang}/*.html and return cached metadata + content.
+
+    Returns a dict mapping language codes to lists of letter dicts:
+    ``{lang: [{"slug": ..., "title": ..., "author": ..., "html": ...}]}``.
+
+    The slug (filename stem) is used as the tone parameter value in the
+    /api/letter endpoint, avoiding exposing filesystem paths to the client.
+    """
+    result = {}
+    if not LETTERS_DIR.is_dir():
+        return result
+    for lang_dir in sorted(LETTERS_DIR.iterdir()):
+        if not lang_dir.is_dir():
+            continue
+        lang = lang_dir.name
+        letters = []
+        for f in sorted(lang_dir.glob("*.html")):
+            content = f.read_text(encoding="utf-8")
+            title = f.stem
+            author = ""
+            for line in content.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("<!-- title:") and stripped.endswith("-->"):
+                    title = stripped[len("<!-- title:"):][:-len("-->")].strip()
+                elif stripped.startswith("<!-- author:") and stripped.endswith("-->"):
+                    author = stripped[len("<!-- author:"):][:-len("-->")].strip()
+                elif stripped:
+                    break
+            # Strip frontmatter comment lines from the letter HTML
+            html_lines = []
+            for line in content.splitlines():
+                stripped = line.strip()
+                if not html_lines and stripped.startswith("<!--") and stripped.endswith("-->"):
+                    continue
+                html_lines.append(line)
+            letters.append({
+                "slug": f.stem,
+                "title": title,
+                "author": author,
+                "html": "\n".join(html_lines),
+            })
+        if letters:
+            result[lang] = letters
+    return result
+
+
+OTHER_LETTERS = _discover_all_other_letters()
 
 
 def _get_language():
@@ -100,6 +151,7 @@ def inject_i18n_helpers():
         current_lang=lang,
         lang_choices=lang_choices,
         filename_placeholder=FILENAME_PLACEHOLDER,
+        other_letters=OTHER_LETTERS.get(lang, []),
     )
 
 
@@ -290,8 +342,6 @@ def api_lookup():
 def api_letter():
     """AJAX endpoint: render a complaint letter."""
     tone = request.args.get("tone", "happy")
-    if tone not in VALID_TONES:
-        return jsonify({"error": "invalid_tone"}), 400
     lang = _get_language()
 
     # Gather data from query parameters
@@ -331,11 +381,18 @@ def api_letter():
         f'{data["license_title"]}'
     )
 
-    # Look up the single letter template for this tone
-    msg_key = f"credit-my-cc-letter-template-{tone}"
-    letter_html = banana.translate(lang, msg_key)
-    if letter_html is None:
-        letter_html = banana.translate("en", msg_key) or ""
+    # Look up the letter template — either a standard tone or an "other" letter
+    if tone in VALID_TONES:
+        msg_key = f"credit-my-cc-letter-template-{tone}"
+        letter_html = banana.translate(lang, msg_key)
+        if letter_html is None:
+            letter_html = banana.translate("en", msg_key) or ""
+    else:
+        # Check "other" letters for this language
+        other = {l["slug"]: l for l in OTHER_LETTERS.get(lang, [])}
+        if tone not in other:
+            return jsonify({"error": "invalid_tone"}), 400
+        letter_html = other[tone]["html"]
 
     # Replace all $N placeholders with the actual values
     # $1  = description fragment      $6  = license title

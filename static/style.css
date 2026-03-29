@@ -295,6 +295,9 @@ input[type="text"].warning {
 .tone-option input[type="radio"] {
     margin-top: 0.15rem;
 }
+#other-letter-select {
+    align-self: center;
+}
 
 /* ── Letter output ─────────────────────────────────────────────── */
 

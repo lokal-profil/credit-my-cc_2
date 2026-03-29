@@ -140,6 +140,9 @@ credit-my-cc-flask/
 │   ├── en.json             ← English source messages
 │   ├── sv.json             ← Swedish translations
 │   └── qqq.json            ← Message documentation (for translators)
+├── letters/
+│   └── sv/                 ← Swedish-only "other" letter templates
+│       └── jan.html
 ├── templates/
 │   └── index.html          ← Main page template (Jinja2)
 ├── static/

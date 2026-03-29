@@ -144,6 +144,19 @@
                          title="{{ _('credit-my-cc-letter-angry') }}" />
                     <input type="radio" name="tone" value="angry" />
                 </label>
+                {% if other_letters %}
+                <label class="tone-option">
+                    <img src="{{ url_for('static', filename='images/Face-monkey.png') }}"
+                         width="40" alt="{{ _('credit-my-cc-letter-other') }}"
+                         title="{{ _('credit-my-cc-letter-other') }}" />
+                    <input type="radio" name="tone" value="other" />
+                </label>
+                <select id="other-letter-select" class="hidden">
+                    {% for letter in other_letters %}
+                    <option value="{{ letter.slug }}">{{ letter.title }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
             </div>
 
             <label></label>
