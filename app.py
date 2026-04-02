@@ -12,7 +12,7 @@ compatible i18n support using the Banana message format.
 import functools
 import re
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 import requests
 from banana_i18n import BananaI18n
@@ -87,19 +87,14 @@ def _discover_all_other_letters():
             content = f.read_text(encoding="utf-8")
             title = f.stem
             author = ""
-            for line in content.splitlines():
-                stripped = line.strip()
-                if stripped.startswith("<!-- title:") and stripped.endswith("-->"):
-                    title = stripped[len("<!-- title:") :][: -len("-->")].strip()
-                elif stripped.startswith("<!-- author:") and stripped.endswith("-->"):
-                    author = stripped[len("<!-- author:") :][: -len("-->")].strip()
-                elif stripped:
-                    break
-            # Strip frontmatter comment lines from the letter HTML
             html_lines = []
             for line in content.splitlines():
                 stripped = line.strip()
                 if not html_lines and stripped.startswith("<!--") and stripped.endswith("-->"):
+                    if stripped.startswith("<!-- title:"):
+                        title = stripped[len("<!-- title:") :][: -len("-->")].strip()
+                    elif stripped.startswith("<!-- author:"):
+                        author = stripped[len("<!-- author:") :][: -len("-->")].strip()
                     continue
                 html_lines.append(line)
             letters.append(
@@ -243,7 +238,7 @@ def _parse_commons_response(data):
         result = {
             "thumb_url": ii.get("thumburl", ""),
             "description_url": ii.get("descriptionurl", ""),
-            "file_title": page.get("title", "")[5:],  # strip "File:"
+            "file_title": page.get("title", "").removeprefix("File:"),
         }
 
         # -- Public domain check
@@ -316,14 +311,15 @@ def api_lookup():
     # Clean up input – handle URLs, File: prefixes, etc.
     if re.search(r"[^.]*\.wiki(p|m)edia\.org/wiki/", filename, re.I):
         try:
-            filename = unquote(filename.split("/wiki/")[1].split(":")[1])
-            filename = filename.replace("_", " ")
-        except (IndexError, KeyError):
+            path = unquote(urlparse(filename).path)
+            wiki_page = path.split("/wiki/", 1)[1]
+            filename = wiki_page.split(":", 1)[1].replace("_", " ")
+        except (IndexError, ValueError):
             return jsonify({"error": "random_url"}), 400
     elif "://" in filename:
         return jsonify({"error": "random_url"}), 400
     elif ":" in filename:
-        filename = filename.split(":")[1]
+        filename = filename.split(":", 1)[1]
 
     try:
         raw = _query_commons(filename)
