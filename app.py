@@ -22,7 +22,7 @@ from flask import (
     render_template,
     request,
 )
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -336,7 +336,10 @@ def api_letter():
     tone = request.args.get("tone", "happy")
     lang = _get_language()
 
-    # Gather data from query parameters
+    # Gather raw data from query parameters.
+    # NOTE: "credit" may contain legitimate HTML (links from the Commons
+    # API Artist field) and needs HTML-aware sanitization via nh3 once
+    # that dependency is added.  Left unescaped for now.
     data = {
         "credit": request.args.get("credit", ""),
         "descr": request.args.get("descr", ""),
@@ -348,29 +351,32 @@ def api_letter():
         "usage": request.args.get("usage", ""),
     }
 
-    # Build description / date fragments
+    # Build description / date fragments (escape interpolated values)
     descr_fragment = ""
     if data["descr"]:
         descr_fragment = banana.translate(lang, "credit-my-cc-of-object").replace(
-            "$1", data["descr"]
+            "$1", str(escape(data["descr"]))
         )
 
     date_fragment = ""
     if data["upload_date"]:
         date_fragment = banana.translate(lang, "credit-my-cc-since-date").replace(
-            "$1", data["upload_date"]
+            "$1", str(escape(data["upload_date"]))
         )
 
-    # Build example attribution lines
-    example_online = (
-        f'<a href="{data["file_url"]}">{data["file_title"]}</a> / '
-        f"<span>{data['credit']}</span> / "
-        f'<a href="{data["license_url"]}">{data["license_title"]}</a>'
+    # Build example attribution lines — Markup.format() auto-escapes
+    # arguments unless they are already Markup objects.
+    example_online = Markup('<a href="{}">{}</a> / <span>{}</span> / <a href="{}">{}</a>').format(
+        data["file_url"],
+        data["file_title"],
+        Markup(data["credit"]),
+        data["license_url"],
+        data["license_title"],
     )
     example_offline = (
-        f"{data['file_title']} @ Wikimedia Commons / "
-        f"{_strip_html(data['credit'])} / "
-        f"{data['license_title']}"
+        f"{escape(data['file_title'])} @ Wikimedia Commons / "
+        f"{escape(_strip_html(data['credit']))} / "
+        f"{escape(data['license_title'])}"
     )
 
     # Look up the letter template — either a standard tone or an "other" letter
@@ -386,7 +392,10 @@ def api_letter():
             return jsonify({"error": "invalid_tone"}), 400
         letter_html = other[tone]["html"]
 
-    # Replace all $N placeholders with the actual values
+    # Replace all $N placeholders with the actual values.
+    # Escape plain-text values to prevent XSS; credit is left as-is
+    # (needs nh3 sanitization — see TODO).
+    #
     # $1  = description fragment      $6  = license title
     # $2  = usage URL                 $7  = license URL
     # $3  = date fragment             $8  = file title
@@ -395,16 +404,16 @@ def api_letter():
     #
     # Replace $10 before $1 to avoid partial match.
     replacements = [
-        ("$10", example_offline),
+        ("$10", str(example_offline)),
         ("$1", descr_fragment),
-        ("$2", data["usage"]),
+        ("$2", str(escape(data["usage"]))),
         ("$3", date_fragment),
-        ("$4", data["file_url"]),
+        ("$4", str(escape(data["file_url"]))),
         ("$5", data["credit"]),
-        ("$6", data["license_title"]),
-        ("$7", data["license_url"]),
-        ("$8", data["file_title"]),
-        ("$9", example_online),
+        ("$6", str(escape(data["license_title"]))),
+        ("$7", str(escape(data["license_url"]))),
+        ("$8", str(escape(data["file_title"]))),
+        ("$9", str(example_online)),
     ]
     for placeholder, value in replacements:
         letter_html = letter_html.replace(placeholder, value)
