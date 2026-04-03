@@ -162,3 +162,4 @@ Credit-my-CC is licensed under the [MIT license](LICENSE).
 - Initial letters by [Jan Ainali](https://github.com/ainali).
 - Original tool by André Costa for [Wikimedia Sverige](https://wikimedia.se/).
 - Logo uses elements from the [BY icon](https://creativecommons.org/about/downloads#Icons) by Creative Commons ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and [Speech bubble](https://commons.wikimedia.org/wiki/File:Speech_bubble.svg) by Amada44 (Public Domain).
+- Edit icon from the [Wikimedia Codex](https://www.mediawiki.org/wiki/Codex) design system ([MIT](https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/heads/main/packages/codex-icons/LICENSE)).

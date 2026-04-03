@@ -281,13 +281,20 @@ textarea.warning,
 
 .editable-trigger {
     flex-shrink: 0;
-    background: none;
+    width: 16px;
+    height: 16px;
     border: none;
-    font-size: 1rem;
     cursor: pointer;
     opacity: 0.5;
-    padding: 0.25rem;
+    padding: 0;
     transition: opacity 0.15s;
+    background-color: currentColor;
+    -webkit-mask-image: url("images/edit.svg");
+    mask-image: url("images/edit.svg");
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 .editable-trigger:hover,
 .editable-trigger:focus-visible {
