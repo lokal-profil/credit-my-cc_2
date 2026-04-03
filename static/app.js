@@ -65,19 +65,55 @@ document.addEventListener("DOMContentLoaded", () => {
         btnWrite.textContent = MESSAGES.write;
     }
 
-    // ── Live previews for credit & description fields ─────────────────
-    $$("#credit, #descr").forEach((input) => {
-        input.addEventListener("input", () => {
-            const previewEl = $(`#${input.id}-preview`);
-            if (!previewEl) return;
-            if (input.id === "credit") {
-                previewEl.innerHTML = DOMPurify.sanitize(input.value);
+    // ── Editable display/edit toggle for credit & description ──────────
+    function setupEditableField(displayEl, triggerEl, inputEl) {
+        function showEdit() {
+            displayEl.classList.add("hidden");
+            triggerEl.classList.add("hidden");
+            inputEl.classList.remove("hidden");
+            inputEl.focus();
+        }
+
+        function showDisplay() {
+            if (inputEl.id === "credit") {
+                displayEl.innerHTML = DOMPurify.sanitize(inputEl.value);
             } else {
-                previewEl.textContent = input.value;
+                displayEl.textContent = inputEl.value;
             }
+            displayEl.classList.remove("hidden");
+            triggerEl.classList.remove("hidden");
+            inputEl.classList.add("hidden");
             switchToWriteMode();
+        }
+
+        displayEl.addEventListener("click", showEdit);
+        triggerEl.addEventListener("click", showEdit);
+        displayEl.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                showEdit();
+            }
         });
-    });
+        inputEl.addEventListener("blur", showDisplay);
+        inputEl.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                showDisplay();
+                displayEl.focus();
+            }
+        });
+    }
+
+    setupEditableField(
+        $("#credit-display"),
+        $("#credit-field .editable-trigger"),
+        $("#credit")
+    );
+    setupEditableField(
+        $("#descr-display"),
+        $("#descr-field .editable-trigger"),
+        $("#descr")
+    );
 
     // ── Revert to Write mode on any form input change ─────────────────
     $$("#usage, #upload_date, #license_title, #license_url, #file_title, #file_url").forEach((input) => {
@@ -198,10 +234,10 @@ document.addEventListener("DOMContentLoaded", () => {
         $("#file_url").value = data.description_url;
         $("#upload_date").value = data.upload_date || "";
         $("#credit").value = data.credit || "";
-        $("#credit-preview").innerHTML = DOMPurify.sanitize(data.credit || "");
+        $("#credit-display").innerHTML = DOMPurify.sanitize(data.credit || "");
         $("#credit-extra").innerHTML = DOMPurify.sanitize(data.credit_extra || "");
         $("#descr").value = "";
-        $("#descr-preview").textContent = "";
+        $("#descr-display").textContent = "";
         $("#descr-extra").innerHTML = DOMPurify.sanitize(data.description_extra || "");
         $("#upload-date-note").textContent = data.upload_date ? MESSAGES.upload_date_note : "";
 
@@ -226,11 +262,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let missing = [];
         for (const id of required) {
             const el = $(`#${id}`);
+            const displayEl = $(`#${id}-display`);
             if (!el.value.trim()) {
                 el.classList.add("warning");
+                if (displayEl) displayEl.classList.add("warning");
                 missing.push(id);
             } else {
                 el.classList.remove("warning");
+                if (displayEl) displayEl.classList.remove("warning");
             }
         }
         if (missing.length) {

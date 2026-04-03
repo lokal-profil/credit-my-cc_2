@@ -191,7 +191,9 @@ input[type="text"].highlighted {
     border-color: var(--color-error);
     box-shadow: 0 0 6px rgba(192,57,43,0.3);
 }
-input[type="text"].warning {
+input[type="text"].warning,
+textarea.warning,
+.editable-display.warning {
     background-color: var(--color-warning-bg);
     border-color: var(--color-error);
 }
@@ -247,19 +249,60 @@ input[type="text"].warning {
     width: 100%;
 }
 
-.input-with-preview {
+.editable-field {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-.input-with-preview input {
-    flex: 1;
+    gap: 0.4rem;
+    min-height: 2.2rem;
+    position: relative;
 }
 
-.preview {
+.editable-display {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    cursor: pointer;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    transition: border-color 0.15s;
+    word-break: break-word;
+}
+.editable-display:hover {
+    border-color: var(--color-border);
+}
+
+/* Placeholder state when value is empty */
+.editable-display:empty::before {
+    content: attr(data-placeholder);
     color: var(--color-text-muted);
-    font-size: 0.85rem;
-    opacity: 0.75;
+    opacity: 0.6;
+}
+
+.editable-trigger {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.5;
+    padding: 0.25rem;
+    transition: opacity 0.15s;
+}
+.editable-trigger:hover,
+.editable-trigger:focus-visible {
+    opacity: 1;
+}
+
+.editable-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+    resize: vertical;
 }
 
 .extra-info {

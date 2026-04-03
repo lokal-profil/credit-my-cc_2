@@ -89,11 +89,18 @@
                    placeholder="{{ _('credit-my-cc-usage-placeholder') }}" required />
 
             <label for="credit">{{ _('credit-my-cc-credit-label') }}</label>
-            <div class="input-with-preview">
-                <input type="text" id="credit"
-                       title="{{ _('credit-my-cc-credit-title') }}"
-                       placeholder="{{ _('credit-my-cc-credit-placeholder') }}" required />
-                <span id="credit-preview" class="preview"></span>
+            <div class="editable-field" id="credit-field">
+                <span class="editable-display" id="credit-display"
+                      role="button" tabindex="0"
+                      data-placeholder="{{ _('credit-my-cc-credit-placeholder') }}"></span>
+                <button type="button" class="editable-trigger"
+                        aria-label="{{ _('credit-my-cc-credit-title') }}"
+                        title="{{ _('credit-my-cc-credit-title') }}">&#x270F;&#xFE0F;</button>
+                <textarea id="credit" class="editable-input hidden"
+                          rows="3"
+                          title="{{ _('credit-my-cc-credit-title') }}"
+                          placeholder="{{ _('credit-my-cc-credit-placeholder') }}"
+                          required></textarea>
             </div>
 
             <label></label>
@@ -108,11 +115,17 @@
             <span id="upload-date-note" class="extra-info"></span>
 
             <label for="descr">{{ _('credit-my-cc-description-label') }}</label>
-            <div class="input-with-preview">
-                <input type="text" id="descr"
-                       title="{{ _('credit-my-cc-description-title') }}"
-                       placeholder="{{ _('credit-my-cc-description-placeholder') }}" />
-                <span id="descr-preview" class="preview"></span>
+            <div class="editable-field" id="descr-field">
+                <span class="editable-display" id="descr-display"
+                      role="button" tabindex="0"
+                      data-placeholder="{{ _('credit-my-cc-description-placeholder') }}"></span>
+                <button type="button" class="editable-trigger"
+                        aria-label="{{ _('credit-my-cc-description-title') }}"
+                        title="{{ _('credit-my-cc-description-title') }}">&#x270F;&#xFE0F;</button>
+                <textarea id="descr" class="editable-input hidden"
+                          rows="2"
+                          title="{{ _('credit-my-cc-description-title') }}"
+                          placeholder="{{ _('credit-my-cc-description-placeholder') }}"></textarea>
             </div>
 
             <label></label>
