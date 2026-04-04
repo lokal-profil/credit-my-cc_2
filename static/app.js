@@ -22,8 +22,70 @@ document.addEventListener("DOMContentLoaded", () => {
     const letterContent   = $("#letter-content");
     const langSelect      = $("#lang-select");
 
+    // ── Form state preservation across language switches ─────────────
+    const FORM_STATE_KEY = "creditMyCC_formState";
+
+    function trySessionStorage(op) {
+        try { return op(); } catch (_) { return undefined; }
+    }
+
+    function saveFormState() {
+        const tone = document.querySelector("input[name='tone']:checked");
+        const state = {
+            usage: $("#usage").value,
+            credit: $("#credit").value,
+            descr: $("#descr").value,
+            upload_date: $("#upload_date").value,
+            tone: tone ? tone.value : "happy",
+        };
+        const otherSel = $("#other-letter-select");
+        if (state.tone === "other" && otherSel) {
+            state.otherSlug = otherSel.value;
+        }
+        trySessionStorage(() => sessionStorage.setItem(FORM_STATE_KEY, JSON.stringify(state)));
+    }
+
+    function restoreFormState() {
+        const raw = trySessionStorage(() => sessionStorage.getItem(FORM_STATE_KEY));
+        if (!raw) return;
+        trySessionStorage(() => sessionStorage.removeItem(FORM_STATE_KEY));
+
+        let state;
+        try { state = JSON.parse(raw); } catch (_) { return; }
+
+        if (state.usage) $("#usage").value = state.usage;
+        if (state.credit) {
+            $("#credit").value = state.credit;
+            $("#credit-display").innerHTML = DOMPurify.sanitize(state.credit);
+        }
+        if (state.descr) $("#descr").value = state.descr;
+        if (state.upload_date) $("#upload_date").value = state.upload_date;
+
+        if (state.tone) {
+            const toneRadio = document.querySelector(
+                `input[name='tone'][value='${state.tone}']`
+            );
+            if (toneRadio) {
+                toneRadio.checked = true;
+                if (state.tone === "other") {
+                    const otherSel = $("#other-letter-select");
+                    if (otherSel) {
+                        otherSel.classList.remove("hidden");
+                        if (state.otherSlug) {
+                            const exists = Array.from(otherSel.options).some(
+                                (opt) => opt.value === state.otherSlug
+                            );
+                            if (exists) otherSel.value = state.otherSlug;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // ── Language switcher ─────────────────────────────────────────────
     langSelect.addEventListener("change", () => {
+        saveFormState();
         const url = new URL(window.location);
         url.searchParams.set("lang", langSelect.value);
         window.location = url.toString();
@@ -34,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const urlFilename = urlParams.get("filename");
     if (urlFilename) {
         filenameInput.value = urlFilename;
-        doLookup();
+        doLookup().then(restoreFormState);
     }
 
     // ── Lookup button / Enter key ─────────────────────────────────────
@@ -172,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const filename = filenameInput.value.trim();
         if (!filename) {
             filenameInput.classList.add("highlighted");
-            return;
+            return Promise.resolve();
         }
         filenameInput.classList.remove("highlighted");
 
@@ -180,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnCheck.textContent = MESSAGES.loading;
         btnCheck.disabled = true;
 
-        fetch(`/api/lookup?filename=${encodeURIComponent(filename)}&lang=${CURRENT_LANG}`)
+        return fetch(`/api/lookup?filename=${encodeURIComponent(filename)}&lang=${CURRENT_LANG}`)
             .then((r) => r.json())
             .then((data) => {
                 btnCheck.textContent = savedText;
