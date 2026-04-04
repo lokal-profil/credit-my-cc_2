@@ -189,7 +189,10 @@ EXAMPLES = [
 # ---------------------------------------------------------------------------
 
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
-USER_AGENT = "CreditMyCC/2.0 (https://lp-tools.toolforge.org/credit-my-cc_2/; User:Lokal_Profil)"
+USER_AGENT = "CreditMyCC/2.0 (https://credit-my-cc.toolforge.org/; User:Lokal_Profil)"
+
+_session = requests.Session()
+_session.headers["User-Agent"] = USER_AGENT
 THUMB_SIZE = 600
 FILENAME_PLACEHOLDER = "Foo.svg"
 VALID_TONES = {"happy", "neutral", "angry"}
@@ -213,11 +216,10 @@ def _query_commons(filename):
         "LicenseShortName|UsageTerms|LicenseUrl|Copyrighted",
         "titles": f"File:{filename}",
     }
-    resp = requests.get(
+    resp = _session.get(
         COMMONS_API,
         params=params,
         timeout=15,
-        headers={"User-Agent": USER_AGENT},
     )
     resp.raise_for_status()
     return resp.json()

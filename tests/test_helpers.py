@@ -1,6 +1,11 @@
-"""Tests for helper functions: _strip_html and _parse_commons_response."""
+"""Tests for helper functions: _strip_html, _parse_commons_response, _session."""
 
-from app import _parse_commons_response, _strip_html
+from app import USER_AGENT, _parse_commons_response, _session, _strip_html
+
+
+class TestSession:
+    def test_commons_session_has_user_agent(self):
+        assert _session.headers["User-Agent"] == USER_AGENT
 
 
 class TestStripHtml:
