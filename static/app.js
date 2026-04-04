@@ -242,6 +242,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Write letter logic
     // ──────────────────────────────────────────────────────────────────
 
+    function fieldLabel(id) {
+        const label = document.querySelector(`label[for="${id}"]`);
+        if (label) {
+            return label.textContent.replace(/[\s:]+$/, "");
+        }
+        return id;
+    }
+
     function doWrite() {
         status.innerHTML = "";
 
@@ -254,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!el.value.trim()) {
                 el.classList.add("warning");
                 if (displayEl) displayEl.classList.add("warning");
-                missing.push(id);
+                missing.push(fieldLabel(id));
             } else {
                 el.classList.remove("warning");
                 if (displayEl) displayEl.classList.remove("warning");
