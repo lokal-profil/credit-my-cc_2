@@ -177,6 +177,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── "Other letters" dropdown toggle ────────────────────────────────
     const otherSelect = $("#other-letter-select");
     if (otherSelect) {
+        const otherRadio = $("input[name='tone'][value='other']");
+        if (otherRadio && otherRadio.checked) {
+            otherSelect.classList.remove("hidden");
+        }
         $$("input[name='tone']").forEach((radio) => {
             radio.addEventListener("change", () => {
                 otherSelect.classList.toggle("hidden", radio.value !== "other" || !radio.checked);
