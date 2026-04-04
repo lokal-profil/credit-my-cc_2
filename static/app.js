@@ -65,8 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
         btnWrite.textContent = MESSAGES.write;
     }
 
-    // ── Editable display/edit toggle for credit & description ──────────
-    function setupEditableField(displayEl, triggerEl, inputEl) {
+    // ── Editable display/edit toggle for credit field ──────────────────
+    {
+        const displayEl = $("#credit-display");
+        const triggerEl = $("#credit-field .editable-trigger");
+        const inputEl = $("#credit");
+
         function showEdit() {
             displayEl.classList.add("hidden");
             triggerEl.classList.add("hidden");
@@ -75,11 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function showDisplay() {
-            if (inputEl.id === "credit") {
-                displayEl.innerHTML = DOMPurify.sanitize(inputEl.value);
-            } else {
-                displayEl.textContent = inputEl.value;
-            }
+            displayEl.innerHTML = DOMPurify.sanitize(inputEl.value);
             displayEl.classList.remove("hidden");
             triggerEl.classList.remove("hidden");
             inputEl.classList.add("hidden");
@@ -104,19 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupEditableField(
-        $("#credit-display"),
-        $("#credit-field .editable-trigger"),
-        $("#credit")
-    );
-    setupEditableField(
-        $("#descr-display"),
-        $("#descr-field .editable-trigger"),
-        $("#descr")
-    );
-
     // ── Revert to Write mode on any form input change ─────────────────
-    $$("#usage, #upload_date, #license_title, #license_url, #file_title, #file_url").forEach((input) => {
+    $$("#usage, #descr, #upload_date, #license_title, #license_url, #file_title, #file_url").forEach((input) => {
         input.addEventListener("input", switchToWriteMode);
     });
     $$("input[name='tone']").forEach((radio) => {
@@ -237,7 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
         $("#credit-display").innerHTML = DOMPurify.sanitize(data.credit || "");
         $("#credit-extra").innerHTML = DOMPurify.sanitize(data.credit_extra || "");
         $("#descr").value = "";
-        $("#descr-display").textContent = "";
         $("#descr-extra").innerHTML = DOMPurify.sanitize(data.description_extra || "");
         $("#upload-date-note").textContent = data.upload_date ? MESSAGES.upload_date_note : "";
 

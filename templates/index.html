@@ -115,18 +115,9 @@
             <span id="upload-date-note" class="extra-info"></span>
 
             <label for="descr">{{ _('credit-my-cc-description-label') }}</label>
-            <div class="editable-field" id="descr-field">
-                <span class="editable-display" id="descr-display"
-                      role="button" tabindex="0"
-                      data-placeholder="{{ _('credit-my-cc-description-placeholder') }}"></span>
-                <button type="button" class="editable-trigger"
-                        aria-label="{{ _('credit-my-cc-description-title') }}"
-                        title="{{ _('credit-my-cc-description-title') }}"></button>
-                <textarea id="descr" class="editable-input hidden"
-                          rows="2"
-                          title="{{ _('credit-my-cc-description-title') }}"
-                          placeholder="{{ _('credit-my-cc-description-placeholder') }}"></textarea>
-            </div>
+            <input type="text" id="descr"
+                   title="{{ _('credit-my-cc-description-title') }}"
+                   placeholder="{{ _('credit-my-cc-description-placeholder') }}" />
 
             <label></label>
             <span id="descr-extra" class="extra-info"></span>
